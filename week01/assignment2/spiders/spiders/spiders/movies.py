@@ -39,15 +39,16 @@ class MoviesSpider(scrapy.Spider):
         #     #items.append(item)
         #     #print(name,moviedict[name]['类型:'],moviedict[name]['上映时间:'])
         #     yield item
-        movies = Selector(response=response).xpath('//div[@class="movie-hover-info"]')
-        for movie in movies:
+        select = Selector(response=response)
+        movies=select.xpath('//div[@class="movie-hover-info"]')
+        for movie in movies[:10]:
             item=SpidersItem()
             name = movie.xpath('./div/@title')[0]
             movietype=movie.xpath('./div/text()')[4]
-            time=movie.xpath('./div/text()')[8]
+            time=movie.xpath('./div/text()')[-1]
             item['name']=name.extract()
             item['movietype']=movietype.extract().strip()
             item['time']=time.extract().strip()
-            #print(name.extract(),movietype.extract().strip(),time.extract().strip())
+            #print(name.extract(),movietype.extract().strip(),movie.xpath('./div/text()')[-1].extract())
             yield item
 
