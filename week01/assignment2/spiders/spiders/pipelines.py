@@ -5,13 +5,12 @@
 
 
 # useful for handling different item types with a single interface
-from itemadapter import ItemAdapter
+#from itemadapter import ItemAdapter
 import pandas as pd
 
 class SpidersPipeline:
     def process_item(self, item, spider):
         mylist=[[item['name'],item['movietype'],item['time']]]
         movie1 = pd.DataFrame(data = mylist)
-
         movie1.to_csv('./movie1.csv',mode='a+', encoding='utf8', index=False, header=False)
         return item

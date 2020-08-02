@@ -4,12 +4,24 @@ from spiders.items import SpidersItem
 from collections import defaultdict
 from scrapy.selector import Selector
 class MoviesSpider(scrapy.Spider):
+
+
+    # name = 'httpbin'
+    # allowed_domains = ['httpbin.org']
+    # # 通过ip查看请求的ip地址
+    # start_urls = ['http://httpbin.org/ip']
+    # # 通过header 查看user-agent
+    # # start_urls = ['http://httpbin.org/headers']
+
+    # def parse(self, response):
+    #     print(response.text)
+
     name = 'movies'
     allowed_domains = ['maoyan.com']
     start_urls = ['https://maoyan.com/films?showType=3']
 
     # def parse(self, response):
-    #     pass
+    #      pass
     def start_requests(self):
         url = 'https://maoyan.com/films?showType=3'
         yield scrapy.Request(url=url, callback=self.parse)
@@ -19,27 +31,8 @@ class MoviesSpider(scrapy.Spider):
 
     # 解析函数
     def parse(self, response):
-
-        # bs_info = bs(response.text, 'html.parser')
-        # moviedict=defaultdict(dict)
-        # for tags in bs_info.find_all('div', attrs={'class': 'movie-hover-info'})[:10]:
-        #     for atag in tags.find_all('div',attrs={'class':'movie-hover-title'}):
-        #         name=atag.get('title')
-        #         hovertag=atag.find('span')
-        #         if hovertag:
-        #             tagtype=hovertag.text.strip()
-        #             if tagtype in ['上映时间:','类型:']:
-        #                 txt=atag.text.strip().split('\n')[1].strip()
-        #                 moviedict[name][tagtype]=txt
-        # for name in moviedict:
-        #     item=SpidersItem()
-        #     item['name']=name
-        #     item['movietype']=moviedict[name]['类型:']
-        #     item['time']=moviedict[name]['上映时间:']
-        #     #items.append(item)
-        #     #print(name,moviedict[name]['类型:'],moviedict[name]['上映时间:'])
-        #     yield item
         select = Selector(response=response)
+        #print(select)
         movies=select.xpath('//div[@class="movie-hover-info"]')
         for movie in movies[:10]:
             item=SpidersItem()
@@ -47,8 +40,9 @@ class MoviesSpider(scrapy.Spider):
             movietype=movie.xpath('./div/text()')[4]
             time=movie.xpath('./div/text()')[-1]
             item['name']=name.extract()
-            item['movietype']=movietype.extract().strip()
+            item['movie_type']=movietype.extract().strip()
             item['time']=time.extract().strip()
-            #print(name.extract(),movietype.extract().strip(),movie.xpath('./div/text()')[-1].extract())
+            print(name.extract(),movietype.extract().strip(),movie.xpath('./div/text()')[-1].extract())
             yield item
+
 
